@@ -16,15 +16,16 @@ namespace AustCseApp.Data.Models
 
 
         [StringLength(32)]
-        [RegularExpression(@"^[A-Za-z]{2,10}\s?-?\s?\d{1,3}$",
-            ErrorMessage = "Batch should look like 'CSE 49' ")]
-        public string? Batch { get; set; }
+        [RegularExpression(@"^\d{1,3}$",
+            ErrorMessage = "Batch Number should input like '49' ")]
+        public string Batch { get; set; }
 
         [StringLength(50)]
-        public string? Tag { get; set; }
+        public string Tag { get; set; }
 
         [StringLength(2048)]
-        public string? ImageUrl { get; set; }
+        public string ImageUrl { get; set; }
+        public bool IsPrivate { get; set; }
 
         [NotMapped]
         //public IFormFile? UploadedContent { get; set; }
@@ -36,12 +37,16 @@ namespace AustCseApp.Data.Models
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
         public DateTime DateUpdated { get; set; } = DateTime.UtcNow;
 
+        public bool IsDeleted { get; set; }
+
 
         // Foreign Key
         public int UserId { get; set; }
 
         // Navigation Properties
-        public User? User { get; set; }
+        public User User { get; set; }
         public ICollection<Like> Likes { get; set; } = new List<Like>();
+        public ICollection<Comment> Comments { get; set; } = new List<Comment>();
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     }
 }
