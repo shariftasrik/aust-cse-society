@@ -15,6 +15,7 @@ namespace AustCseApp.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<Hashtag> Hashtags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -35,7 +35,8 @@
                 {
                     @foreach(var post in Model)
                     {
-                        <partial name="Home/_Post" model="post"></partial>
+                        <partial name="Home/_Post" model="post" view-data='new ViewDataDictionary(ViewData) { { "ShowAllComment", false } }' />
+
                     }
                 }
 
@@ -48,7 +49,7 @@
                     <partial name="Sidebar/_SuggestedFriends"></partial>
                 </div>
                 <div class="box p-5 px-6 border-1">
-                    <partial name="Sidebar/_TrendsForYou"></partial>
+                    @await Component.InvokeAsync("Hashtags")
                 </div>
             </div>
         </div>

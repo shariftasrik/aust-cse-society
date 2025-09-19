@@ -13,6 +13,8 @@
     bool isFavorited = Model.Favorites.Any(n => n.UserId == 1);
     bool isLiked = Model.Likes.Any(n => n.UserId == 1);
     bool isPrivate = Model.IsPrivate == true && Model.UserId == 1;
+    string defaultUserPicture = "~/images/avatar/user.png";
+    bool showAllComments = ViewData["ShowAllComment"] as bool? ?? false;
 }
 
 <div class="bg-white rounded-xl shadow-sm text-sm font-medium border1">
@@ -20,11 +22,7 @@
     @* Post heading *@
     <div class="flex gap-3 sm:p-4 p-2.5 text-sm font-medium">
         <a>
-            <img src="@(string.IsNullOrWhiteSpace(Model.User?.ProfilePictureUrl)
-                             ? Url.Content("~/images/avatar/user.png")
-                             : Model.User!.ProfilePictureUrl)"
-                 alt="@((Model.User?.FullName) ?? "Unknown User")"
-                 class="w-9 h-9 rounded-full" />
+            <img src="@(!string.IsNullOrEmpty(Model.User.ProfilePictureUrl) ? Url.Content("~/" + Model.User.ProfilePictureUrl) : defaultUserPicture)" class="w-9 h-9 rounded-full" />
         </a>
 
         <div class="flex-1">
@@ -85,18 +83,20 @@
     </div>
 
     @* Post content text *@
-    <div class="sm:px-4 p-2.5 pt-0 w-full">
-        <p class="font-normal ">
-            @Model.Content
-        </p>
-    </div>
+    <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.Id">
+        <div class="sm:px-4 p-2.5 pt-0 w-full">
+            <p class="font-normal ">
+                @Model.Content
+            </p>
+        </div>
+    </a>
 
     @* Post image  *@
     @if (!string.IsNullOrEmpty(Model.ImageUrl))
     {
-        <a>
-            <div class="relative w-full lg:h-96 h-full sm:px-4">
-                <img src="@Model.ImageUrl" class="sm:rounded-lg w-full h-full object-cover" />
+        <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.Id">
+            <div class="relative w-full h-full">
+                <img src="@Url.Content("~/" + Model.ImageUrl)" class="sm:rounded-lg w-full h-full object-cover" />
             </div>
         </a>
     }
@@ -142,7 +142,9 @@
     <div>
         <div class="p-2.5 border-t border-gray-100 font-normal space-y-3 relative">
             <!-- sob gulo comment ei loop diye access kora hoise-->
-            @foreach (var comment in Model.Comments.OrderByDescending(n => n.DateCreated).Take(3))
+            @foreach (var comment in showAllComments
+                        ? Model.Comments.OrderByDescending(n => n.DateCreated)
+                        : Model.Comments.OrderByDescending(n => n.DateCreated).Take(2))
             {
                 TimeSpan commentTimeSpanSincePosted = DateTime.UtcNow.Subtract(comment.DateCreated);
 
@@ -156,7 +158,7 @@
 
                 <div class="flex items-start gap-3 relative">
                     <a>
-                        <img src="@(comment.User?.ProfilePictureUrl ?? "~/images/avatar/user.png")" class="w-6 h-6 mt-1 rounded-full" />
+                        <img src="@(!string.IsNullOrEmpty(comment.User.ProfilePictureUrl) ? Url.Content("~/" + comment.User.ProfilePictureUrl) : defaultUserPicture)" class="w-6 h-6 mt-1 rounded-full" />
                     </a>
                     <div class="flex-1">
                         <div class="flex justify-content-between">
@@ -180,10 +182,10 @@
                     </div>
                 </div>
             }
-            @if (Model.Comments.Count >= 3)
+            @if (Model.Comments.Count >= 3 && !showAllComments)
             {
                 <div class="p-1.5">
-                    <a>
+                    <a asp-controller="Home" asp-action="Details" asp-route-postId="@Model.Id">
                         Show all comments
                     </a>
                 </div>

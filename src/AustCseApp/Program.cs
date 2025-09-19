@@ -1,5 +1,6 @@
 using AustCseApp.Data;
 using AustCseApp.Data.Helpers;
+using AustCseApp.Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace AustCseApp
@@ -16,6 +17,13 @@ namespace AustCseApp
             // Database Configuration
             var dbConnectionString = builder.Configuration.GetConnectionString("Default");
             builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(dbConnectionString));
+
+            //Services configuration
+            builder.Services.AddScoped<IPostsService, PostsService>();
+            builder.Services.AddScoped<IHashtagsService, HashtagsService>();
+            builder.Services.AddScoped<IFilesService, FilesService>();
+            builder.Services.AddScoped<IUsersService, UsersService>();
+
 
             var app = builder.Build();
 
