@@ -1,4 +1,4 @@
-﻿using AustCseApp.Data.Helpers.Constants;
+using AustCseApp.Data.Helpers.Constants;
 using AustCseApp.Data.Models;
 using AustCseApp.ViewModels.Authentication;
 using AustCseApp.ViewModels.Settings;
@@ -42,7 +42,7 @@ namespace AustCseApp.Controllers
             if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
                 await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
-            var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, false, false);
 
             if (result.Succeeded)
                 return RedirectToAction("Index", "Home");
@@ -127,6 +127,28 @@ namespace AustCseApp.Controllers
             return RedirectToAction("Index", "Settings");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileVM profileVM)
+        {
+            var loggedInUser = await _userManager.GetUserAsync(User);
+            if (loggedInUser == null)
+                return RedirectToAction("Login");
+
+            loggedInUser.FullName = profileVM.FullName;
+            loggedInUser.UserName = profileVM.UserName;
+            loggedInUser.Bio = profileVM.Bio;
+
+            var result = await _userManager.UpdateAsync(loggedInUser);
+            if (!result.Succeeded)
+            {
+                TempData["UserProfileError"] = "User profile could not be updated";
+                TempData["ActiveTab"] = "Profile";
+            }
+
+            await _signInManager.RefreshSignInAsync(loggedInUser);
+            return RedirectToAction("Index", "Settings");
+        }
 
         [Authorize]
         public async Task<IActionResult> Logout()
