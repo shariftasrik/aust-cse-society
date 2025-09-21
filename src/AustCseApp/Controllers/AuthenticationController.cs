@@ -42,7 +42,7 @@ namespace AustCseApp.Controllers
             if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
                 await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
-            var result = await _signInManager.PasswordSignInAsync(loginVM.Email, loginVM.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, false, false);
 
             if (result.Succeeded)
                 return RedirectToAction("Index", "Home");
