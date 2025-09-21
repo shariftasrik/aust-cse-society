@@ -1,6 +1,7 @@
 ﻿using AustCseApp.Data.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AustCseApp.Controllers
 {
@@ -16,8 +17,9 @@ namespace AustCseApp.Controllers
 
         public async Task<IActionResult> Index()
         {
-            int loggedInUserId = 1;
-            var myFavoritePosts = await _postsService.GetAllFavoritedPostsAsync(loggedInUserId);
+            var loggedInUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var myFavoritePosts = await _postsService.GetAllFavoritedPostsAsync(int.Parse(loggedInUserId));
+
 
             return View(myFavoritePosts);
         }
