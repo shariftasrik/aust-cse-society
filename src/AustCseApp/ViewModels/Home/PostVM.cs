@@ -6,6 +6,7 @@ namespace AustCseApp.ViewModels.Home
     {
         public string? Content { get; set; }
 
+        [Required]
         public string? Batch { get; set; }
 
  
