@@ -1,0 +1,120 @@
+@model PostVM;
+
+﻿<div class="hidden lg:p-20" id="create-status" uk-modal="">
+
+    <div class="uk-modal-dialog tt relative overflow-hidden mx-auto bg-white shadow-xl rounded-lg md:w-[520px] w-full">
+
+        <div class="text-center py-4 border-b mb-0">
+            <h2 class="text-sm font-medium text-black">Create Status</h2>
+            <button type="button" class="button-icon absolute top-0 right-0 m-2.5 uk-modal-close">
+
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+
+        <form asp-controller="Home" asp-action="CreatePost" enctype="multipart/form-data">
+            <div class="space-y-5 mt-3 p-4">
+
+                <!-- Post content -->
+                <label class="block">
+                    <span class="sr-only">Post content</span>
+                    <textarea class="w-full !text-black placeholder:!text-black/30 !bg-white !border-transparent focus:!border-transparent focus:!ring-transparent !font-normal !text-xl"
+                              name="content"
+                              asp-for="@Model.Content"
+                              rows="2"
+                              placeholder="What do you have in mind?"></textarea>
+                </label>
+
+                <!-- Batch + Tags side by side -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <!-- Batch No. -->
+                    <label class="block">
+                        <span class="block text-xs text-slate-500 mb-1">Batch No.</span>
+                        <input type="text"
+                               inputmode="numeric"
+                               pattern="^\d{2,4}$"
+                               title="Enter Your Batch No."
+                               name="batch"
+                               placeholder="e.g., 49"
+                               class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-black placeholder:text-black/30 focus:outline-none focus:ring-2 focus:ring-sky-200" />
+                    </label>
+
+                    <!-- Tags -->
+                    <label class="block">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs text-slate-500">Tag</span>
+                            <span class="text-[11px] text-slate-400">Choose Any</span>
+                        </div>
+                        <select name="tag"
+                                class="w-full rounded-md border border-slate-200 px-3 py-2 text-sm text-black bg-white focus:outline-none focus:ring-2 focus:ring-sky-200">
+                            <option value="" selected disabled>— Select a tag —</option>
+                            <option value="Q&A">Q&amp;A</option>
+                            <option value="Help">Help</option>
+                            <option value="Job/Recruitment">Job/Recruitment</option>
+                            <option value="Sell">Sell</option>
+                            <option value="Rent">Rent</option>
+                            <option value="Thesis">Thesis</option>
+                            <option value="Project">Project</option>
+                            <option value="AUST Canteen">AUST Canteen</option>
+                            <option value="AUST Clubs">AUST Clubs</option>
+                            <option value="Teacher">Teacher</option>
+                            <option value="Current Student">Current Student</option>
+                            <option value="Alumni">Alumni</option>
+                            <option value="Irregulation">Irregulation</option>
+                            <option value="Unexpected">Unexpected</option>
+                            <option value="Others">Others</option>
+                        </select>
+                    </label>
+
+                </div>
+
+
+                <!-- Image upload -->
+                <div class="flex items-center gap-2 text-sm font-medium flex-wrap">
+                    <input id="imageUpload" type="file" class="hidden" name="image" accept="image/png, image/jpeg" />
+
+                    <div id="imagePreviewContainer" class="hidden w-full">
+                        <img id="imagePreview" src="#" alt="Selected image preview" class="w-full h-auto rounded" />
+                    </div>
+
+                    <button type="button" id="imageUploadBtn" class="flex items-center gap-1.5 bg-sky-50 text-sky-600 rounded-full py-1 px-2 border-2 border-sky-100">
+                        <ion-icon name="image" class="text-base"></ion-icon> Image
+                    </button>
+                </div>
+            </div>
+
+            <div class="p-5 flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <button type="submit" class="button bg-blue-500 text-white py-2 px-12 text-[14px]">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script>
+    document.getElementById('imageUploadBtn').addEventListener('click', () => {
+        document.getElementById('imageUpload').click();
+    });
+
+    document.getElementById('imageUpload').addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        const imagePreview = document.getElementById('imagePreview');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+        if (file) {
+            const reader = new FileReader();
+            imagePreviewContainer.classList.remove('hidden');
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        } else {
+            imagePreviewContainer.classList.add('hidden');
+        }
+    });
+</script>
