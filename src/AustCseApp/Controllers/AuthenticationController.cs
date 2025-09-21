@@ -1,4 +1,4 @@
-﻿using AustCseApp.Data.Helpers.Constants;
+using AustCseApp.Data.Helpers.Constants;
 using AustCseApp.Data.Models;
 using AustCseApp.ViewModels.Authentication;
 using AustCseApp.ViewModels.Settings;
@@ -128,6 +128,27 @@ namespace AustCseApp.Controllers
         }
 
 
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileVM profileVM)
+        {
+            var loggedInUser = await _userManager.GetUserAsync(User);
+            if (loggedInUser == null)
+                return RedirectToAction("Login");
+
+            loggedInUser.FullName = profileVM.FullName;
+            loggedInUser.UserName = profileVM.UserName;
+            loggedInUser.Bio = profileVM.Bio;
+
+            var result = await _userManager.UpdateAsync(loggedInUser);
+            if (!result.Succeeded)
+            {
+                TempData["UserProfileError"] = "User profile could not be updated";
+                TempData["ActiveTab"] = "Profile";
+            }
+
+            await _signInManager.RefreshSignInAsync(loggedInUser);
+            return RedirectToAction("Index", "Settings");
+        }
 
         [Authorize]
         public async Task<IActionResult> Logout()
