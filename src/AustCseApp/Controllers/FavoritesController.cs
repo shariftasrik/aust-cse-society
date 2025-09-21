@@ -1,8 +1,10 @@
 ﻿using AustCseApp.Data.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AustCseApp.Controllers
 {
+    [Authorize]
     public class FavoritesController : Controller
     {
         private readonly IPostsService _postsService;

@@ -1,9 +1,11 @@
 ﻿using AustCseApp.Data.Services;
 using AustCseApp.ViewModels.Settings;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AustCseApp.Controllers
 {
+    [Authorize]
     public class SettingsController : Controller
     {
         private readonly IUsersService _usersService;
@@ -38,10 +40,6 @@ namespace AustCseApp.Controllers
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> UpdatePassword(UpdatePasswordVM updatePasswordVM)
-        {
-            return RedirectToAction("Index");
-        }
+        
     }
 }

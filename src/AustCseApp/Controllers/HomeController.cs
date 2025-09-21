@@ -4,6 +4,7 @@ using AustCseApp.Data.Helpers.Enums;
 using AustCseApp.Data.Models;
 using AustCseApp.Data.Services;
 using AustCseApp.ViewModels.Home;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ using System.Diagnostics;
 
 namespace AustCseApp.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
