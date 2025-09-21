@@ -1,4 +1,4 @@
-﻿using AustCseApp.Data.Helpers.Constants;
+using AustCseApp.Data.Helpers.Constants;
 using AustCseApp.Data.Models;
 using AustCseApp.ViewModels.Authentication;
 using AustCseApp.ViewModels.Settings;
