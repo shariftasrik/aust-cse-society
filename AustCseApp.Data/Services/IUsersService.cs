@@ -9,7 +9,8 @@ namespace AustCseApp.Data.Services
 {
     public interface IUsersService
     {
-        Task<User> GetUser(int loggedInUserId);
+        Task<User> GetUser(int userId);
+        Task<List<User>> GetOtherUsersAsync(int currentUserId, int take = 12);
         Task UpdateUserProfilePicture(int loggedInUserId, string profilePictureUrl);
     }
 }

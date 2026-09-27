@@ -33,15 +33,31 @@ namespace AustCseApp.Data.Services
             return allPosts;
         }
 
-        public async Task<Post> GetPostByIdAsync(int postId)
+        public async Task<List<Post>> GetPostsByUserAsync(int profileUserId, int loggedInUserId)
+        {
+            return await _context.Posts
+                .Where(n => n.UserId == profileUserId
+                    && !n.IsDeleted
+                    && (!n.IsPrivate || n.UserId == loggedInUserId))
+                .Include(n => n.User)
+                .Include(n => n.Likes)
+                .Include(n => n.Favorites)
+                .Include(n => n.Comments).ThenInclude(n => n.User)
+                .OrderByDescending(n => n.DateCreated)
+                .ToListAsync();
+        }
+
+        public async Task<Post> GetPostByIdAsync(int postId, int loggedInUserId)
         {
             var postDb = await _context.Posts
                .Include(n => n.User)
                .Include(n => n.Likes)
                .Include(n => n.Favorites)
                .Include(n => n.Comments).ThenInclude(n => n.User)
-               .FirstOrDefaultAsync(n => n.Id == postId);
+               .FirstOrDefaultAsync(n => n.Id == postId && !n.IsDeleted);
 
+            if (postDb == null) return null;
+            if (postDb.IsPrivate && postDb.UserId != loggedInUserId) return null;
             return postDb;
         }
 
@@ -53,7 +69,9 @@ namespace AustCseApp.Data.Services
                     .ThenInclude(c => c.User)
                 .Include(f => f.Post.Likes)
                 .Include(f => f.Post.Favorites)
-                .Where(n => n.UserId == loggedInUserId && !n.Post.IsDeleted )
+                .Where(n => n.UserId == loggedInUserId
+                    && !n.Post.IsDeleted
+                    && (!n.Post.IsPrivate || n.Post.UserId == loggedInUserId))
                 .OrderByDescending(f => f.DateCreated)
                 .Select(n => n.Post)
                 .ToListAsync();
@@ -75,21 +93,30 @@ namespace AustCseApp.Data.Services
             return post;
         }
 
-
-
-        public async Task<Post> RemovePostAsync(int postId)
+        public async Task<Post> RemovePostAsync(int postId, int userId)
         {
-            var postDb = await _context.Posts.FirstOrDefaultAsync(n => n.Id == postId);
+            var post = await _context.Posts
+                .FirstOrDefaultAsync(n => n.Id == postId && n.UserId == userId && !n.IsDeleted);
 
-            if (postDb != null)
+            if (post == null) return null;
+
+            post.IsDeleted = true;
+            post.DateUpdated = DateTime.UtcNow;
+            _context.Posts.Update(post);
+            await _context.SaveChangesAsync();
+            return post;
+        }
+
+
+
+        public async Task RemovePostCommentAsync(int commentId, int userId)
+        {
+            var commentDb = await _context.Comments.FirstOrDefaultAsync(n => n.Id == commentId && n.UserId == userId);
+            if (commentDb != null)
             {
-                //_context.Posts.Remove(postDb);
-                postDb.IsDeleted = true;
-                _context.Posts.Update(postDb);
+                _context.Comments.Remove(commentDb);
                 await _context.SaveChangesAsync();
             }
-
-            return postDb;
         }
 
         public async Task RemovePostCommentAsync(int commentId)
