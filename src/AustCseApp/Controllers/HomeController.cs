@@ -42,7 +42,11 @@ namespace AustCseApp.Controllers
 
         public async Task<IActionResult> Details(int postId)
         {
-            var post = await _postsService.GetPostByIdAsync(postId);
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null) return RedirectToLogin();
+
+            var post = await _postsService.GetPostByIdAsync(postId, loggedInUserId.Value);
+            if (post == null) return NotFound();
             return View(post);
         }
 
@@ -74,36 +78,22 @@ namespace AustCseApp.Controllers
             //Redirect to the index page
             return RedirectToAction("Index");
         }
-    
+
         [HttpPost]
-        public async Task<IActionResult> TogglePostLike(PostLikeVm postLikeVM)
+        public async Task<IActionResult> TogglePostLike(PostLikeVm postLikeVM, string returnUrl)
         {
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null) return RedirectToLogin();
-
             await _postsService.TogglePostLikeAsync(postLikeVM.PostId, loggedInUserId.Value);
-
-            return RedirectToAction("Index");
+            return RedirectAfterPostAction(postLikeVM.PostId, returnUrl);
         }
 
         [HttpPost]
-        public async Task<IActionResult> TogglePostVisibility(PostVisibilityVM postVisibilityVM)
-        {
-            var loggedInUserId = GetUserId();
-            if (loggedInUserId == null) return RedirectToLogin();
-            await _postsService.TogglePostVisibilityAsync(postVisibilityVM.PostId, loggedInUserId.Value);
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddPostComment(PostCommentVM postCommentVM)
+        public async Task<IActionResult> AddPostComment(PostCommentVM postCommentVM, string returnUrl)
         {
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null) return RedirectToLogin();
 
-
-            //Creat a post object
             var newComment = new Comment()
             {
                 UserId = loggedInUserId.Value,
@@ -115,38 +105,38 @@ namespace AustCseApp.Controllers
 
             await _postsService.AddPostCommentAsync(newComment);
 
-            return RedirectToAction("Index");
+            return RedirectAfterPostAction(postCommentVM.PostId, returnUrl);
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM)
-        {
-            await _postsService.RemovePostCommentAsync(removeCommentVM.CommentId);
-
-            return RedirectToAction("Index");
-        }
-
-
-        [HttpPost]
-        public async Task<IActionResult> TogglePostFavorite(PostFavoriteVM postFavoriteVM)
+        public async Task<IActionResult> RemovePostComment(RemoveCommentVM removeCommentVM, string returnUrl)
         {
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null) return RedirectToLogin();
-            await _postsService.TogglePostFavoriteAsync(postFavoriteVM.PostId, loggedInUserId.Value);
-
+            await _postsService.RemovePostCommentAsync(removeCommentVM.CommentId, loggedInUserId.Value);
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
             return RedirectToAction("Index");
         }
+
 
         [HttpPost]
         public async Task<IActionResult> PostRemove(PostRemoveVM postRemoveVM)
         {
-            var postRemoved = await _postsService.RemovePostAsync(postRemoveVM.PostId);
-            await _hashtagsService.ProcessHashtagsForRemovedPostAsync(postRemoved.Content);
-
-
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null) return RedirectToLogin();
+            var postRemoved = await _postsService.RemovePostAsync(postRemoveVM.PostId, loggedInUserId.Value);
+            if (postRemoved != null)
+                await _hashtagsService.ProcessHashtagsForRemovedPostAsync(postRemoved.Content);
             return RedirectToAction("Index");
         }
-
+        private IActionResult RedirectAfterPostAction(int postId, string returnUrl)
+        {
+            if (!string.IsNullOrEmpty(returnUrl) && Url.IsLocalUrl(returnUrl))
+                return Redirect(returnUrl);
+            return RedirectToAction("Details", new { postId });
+        }
     }
+
 }
