@@ -42,7 +42,8 @@ namespace AustCseApp.Controllers
             if (!existingUserClaims.Any(c => c.Type == CustomClaim.FullName))
                 await _userManager.AddClaimAsync(existingUser, new Claim(CustomClaim.FullName, existingUser.FullName));
 
-            var result = await _signInManager.PasswordSignInAsync(existingUser.UserName, loginVM.Password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(
+                existingUser.UserName, loginVM.Password, loginVM.RememberMe, false);
 
             if (result.Succeeded)
                 return RedirectToAction("Index", "Home");
@@ -151,6 +152,8 @@ namespace AustCseApp.Controllers
         }
 
         [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();

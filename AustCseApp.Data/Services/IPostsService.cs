@@ -11,13 +11,14 @@ namespace AustCseApp.Data.Services
     public interface IPostsService
     {
         Task<List<Post>> GetAllPostsAsync(int loggedInUserId);
-        Task<Post> GetPostByIdAsync(int postId);
+        Task<List<Post>> GetPostsByUserAsync(int profileUserId, int loggedInUserId);
+        Task<Post> GetPostByIdAsync(int postId, int loggedInUserId);
         Task<List<Post>> GetAllFavoritedPostsAsync(int loggedInUserId);
         Task<Post> CreatePostAsync(Post post);
-        Task<Post> RemovePostAsync(int postId);
+        Task<Post> RemovePostAsync(int postId, int userId);
 
         Task AddPostCommentAsync(Comment comment);
-        Task RemovePostCommentAsync(int commentId);
+        Task RemovePostCommentAsync(int commentId, int userId);
 
         Task TogglePostLikeAsync(int postId, int userId);
         Task TogglePostFavoriteAsync(int postId, int userId);

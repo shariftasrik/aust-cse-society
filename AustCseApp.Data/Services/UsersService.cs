@@ -15,16 +15,21 @@ namespace AustCseApp.Data.Services
         {
             _appDbContext = appDbContext;
         }
-
-        public async Task<User> GetUser(int loggedInUserId)
+        public async Task<User> GetUser(int userId)
         {
-            return await _appDbContext.Users.FirstOrDefaultAsync(n => n.Id == loggedInUserId) ?? new User();
+            return await _appDbContext.Users.FirstOrDefaultAsync(n => n.Id == userId);
         }
-
+        public async Task<List<User>> GetOtherUsersAsync(int currentUserId, int take = 12)
+        {
+            return await _appDbContext.Users
+                .Where(u => u.Id != currentUserId && !u.IsDeleted)
+                .OrderBy(u => u.FullName)
+                .Take(take)
+                .ToListAsync();
+        }
         public async Task UpdateUserProfilePicture(int loggedInUserId, string profilePictureUrl)
         {
             var userDb = await _appDbContext.Users.FirstOrDefaultAsync(n => n.Id == loggedInUserId);
-
             if (userDb != null)
             {
                 userDb.ProfilePictureUrl = profilePictureUrl;
