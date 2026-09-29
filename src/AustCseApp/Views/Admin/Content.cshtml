@@ -1,0 +1,105 @@
+@model List<Course>
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Admin</p>
+        <h1 class="ac-title">Semester content</h1>
+        <p class="ac-muted">Update a course code or title, move it between semesters, or remove a video, paper, note, or book.</p>
+        <div class="ac-tabs" style="margin-top:14px">
+            <a asp-action="Index">People</a>
+            <a class="ac-on" asp-action="Content">Semester content</a>
+        </div>
+        @if (TempData["AdminError"] != null)
+        {
+            <div class="ac-banner warn">@TempData["AdminError"]</div>
+        }
+        @if (TempData["AdminMessage"] != null)
+        {
+            <div class="ac-banner">@TempData["AdminMessage"]</div>
+        }
+
+        <section class="ac-card" style="margin-top:16px">
+            <h2 style="font-weight:700;margin:0 0 8px">Add a course</h2>
+            <form asp-action="AddCourse" method="post" class="ac-form ac-edit">
+                <label>Code<input name="code" required /></label>
+                <label>Title<input name="title" required /></label>
+                <label>Semester<input name="semester" type="number" min="1" max="8" value="1" /></label>
+                <label>Track
+                    <select name="track">
+                        <option value="Semester">Semester</option>
+                        <option value="Fundamental">Fundamental</option>
+                    </select>
+                </label>
+                <button class="ac-btn" type="submit">Add</button>
+            </form>
+        </section>
+
+        @foreach (var semester in Enumerable.Range(1, 8))
+        {
+            var courses = Model.Where(c => c.Track == CourseTrack.Semester && c.SemesterNumber == semester).ToList();
+            <section class="ac-card" style="margin-top:14px">
+                <h2 style="font-weight:700;margin:0">Semester @semester</h2>
+                @if (courses.Count == 0)
+                {
+                    <p class="ac-muted">No courses yet.</p>
+                }
+                @foreach (var course in courses)
+                {
+                    <form asp-action="UpdateCourse" method="post" class="ac-form ac-edit" style="margin-top:12px">
+                        <input type="hidden" name="id" value="@course.Id" />
+                        <input type="hidden" name="track" value="Semester" />
+                        <label>Code<input name="code" value="@course.Code" required /></label>
+                        <label>Title<input name="title" value="@course.Title" required /></label>
+                        <label>Semester<input name="semester" type="number" min="1" max="8" value="@course.SemesterNumber" /></label>
+                        <button class="ac-btn" type="submit">Save</button>
+                        <button class="ac-btn danger" type="submit" formaction="/Admin/DeleteCourse" formmethod="post" onclick="return confirm('Remove this course and its files?');">Delete</button>
+                    </form>
+                    @foreach (var item in course.Resources.OrderBy(r => r.Kind).ThenBy(r => r.Title))
+                    {
+                        <form asp-action="UpdateResource" method="post" class="ac-form ac-resource">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <label>@item.Kind · @item.ApprovalStatus<input name="title" value="@item.Title" required /></label>
+                            <label>Session<input name="sessionLabel" value="@item.SessionLabel" /></label>
+                            <label>Year<input name="year" type="number" value="@item.Year" /></label>
+                            <button class="ac-btn secondary" type="submit">Save</button>
+                            <button class="ac-btn danger" type="submit" formaction="/Admin/DeleteResource" formmethod="post" onclick="return confirm('Remove this item?');">Delete</button>
+                        </form>
+                    }
+                }
+            </section>
+        }
+
+        <section class="ac-card" style="margin-top:14px">
+            <h2 style="font-weight:700;margin:0">Fundamentals</h2>
+            @{
+                var fundamentals = Model.Where(c => c.Track == CourseTrack.Fundamental).ToList();
+            }
+            @if (fundamentals.Count == 0)
+            {
+                <p class="ac-muted">No fundamentals yet.</p>
+            }
+            @foreach (var course in fundamentals)
+            {
+                <form asp-action="UpdateCourse" method="post" class="ac-form ac-edit" style="margin-top:12px">
+                    <input type="hidden" name="id" value="@course.Id" />
+                    <input type="hidden" name="track" value="Fundamental" />
+                    <label>Code<input name="code" value="@course.Code" required /></label>
+                    <label>Title<input name="title" value="@course.Title" required /></label>
+                    <label>Track<input value="Career" disabled /></label>
+                    <button class="ac-btn" type="submit">Save</button>
+                    <button class="ac-btn danger" type="submit" formaction="/Admin/DeleteCourse" formmethod="post" onclick="return confirm('Remove this course and its files?');">Delete</button>
+                </form>
+                @foreach (var item in course.Resources.OrderBy(r => r.Title))
+                {
+                    <form asp-action="UpdateResource" method="post" class="ac-form ac-resource">
+                        <input type="hidden" name="id" value="@item.Id" />
+                        <label>@item.Kind · @item.ApprovalStatus<input name="title" value="@item.Title" required /></label>
+                        <label>Session<input name="sessionLabel" value="@item.SessionLabel" /></label>
+                        <label>Year<input name="year" type="number" value="@item.Year" /></label>
+                        <button class="ac-btn secondary" type="submit">Save</button>
+                        <button class="ac-btn danger" type="submit" formaction="/Admin/DeleteResource" formmethod="post" onclick="return confirm('Remove this item?');">Delete</button>
+                    </form>
+                }
+            }
+        </section>
+    </div>
+</main>

@@ -106,7 +106,6 @@ namespace AustCseApp.Controllers
                 await _userManager.AddToRoleAsync(newUser, AppRoles.User);
                 await _userManager.AddClaimAsync(newUser, new Claim(CustomClaim.FullName, newUser.FullName));
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
-                TempData["BatchError"] = "Your account is pending. You can browse the library. Posting opens after an admin verifies you.";
                 return RedirectToAction("Index", "Home");
             }
 

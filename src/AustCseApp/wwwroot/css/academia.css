@@ -1,10 +1,61 @@
 body {
     background: #f4f5f7;
+    color: #18181b;
+}
+
+/* The old theme turns headings white in dark mode. Keep this app light. */
+.ac-main,
+.ac-main p,
+.ac-main label,
+.ac-main li,
+.ac-main strong,
+.ac-main h1,
+.ac-main h2,
+.ac-main h3,
+.ac-main h4,
+#site__main,
+#site__main p,
+#site__main label,
+#site__main h1,
+#site__main h2,
+#site__main h3,
+#site__main h4,
+header,
+header span,
+header a {
+    color: #18181b !important;
+}
+
+.ac-main input,
+.ac-main select,
+.ac-main textarea,
+#site__main input,
+#site__main select,
+#site__main textarea {
+    color: #18181b !important;
+    background: #fff !important;
 }
 
 .ac-sidebar {
     background: #ffffff !important;
     border-right: 1px solid #e7e5e4;
+}
+
+.ac-side-shell {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.ac-side-main {
+    flex: 1;
+    overflow: auto;
+}
+
+.ac-side-bottom {
+    border-top: 1px solid #ececee;
+    padding-top: 8px;
+    margin-top: 8px;
 }
 
 .ac-sidebar nav a {
@@ -14,7 +65,7 @@ body {
     margin: 4px 8px;
     padding: 10px 12px;
     border-radius: 12px;
-    color: #3f3f46;
+    color: #3f3f46 !important;
     font-weight: 600;
     font-size: 14px;
 }
@@ -22,7 +73,7 @@ body {
 .ac-sidebar nav a.ac-active,
 .ac-sidebar nav a:hover {
     background: #f5f3ff;
-    color: #6d28d9;
+    color: #6d28d9 !important;
 }
 
 .ac-main {
@@ -45,6 +96,7 @@ body {
 
 .ac-card {
     background: #fff;
+    color: #18181b !important;
     border: 1px solid #ececee;
     border-radius: 16px;
     padding: 20px;
@@ -54,11 +106,20 @@ body {
 .ac-title {
     font-size: 28px;
     font-weight: 700;
-    color: #18181b;
+    color: #18181b !important;
     margin: 0;
 }
 
-.ac-muted { color: #71717a; font-size: 14px; }
+.ac-sem-num {
+    color: #18181b !important;
+    font-size: 32px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: 8px 0 0;
+}
+
+.ac-main .ac-muted,
+#site__main .ac-muted { color: #52525b !important; font-size: 14px; }
 
 .ac-grid {
     display: grid;
@@ -67,11 +128,20 @@ body {
     margin-top: 18px;
 }
 
-.ac-grid a.ac-card { display: block; color: inherit; text-decoration: none; }
-.ac-grid a.ac-card:hover { border-color: #c4b5fd; }
+.ac-grid a.ac-card {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+}
+.ac-grid a.ac-card:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 10px 24px rgba(109, 40, 217, .08);
+    transform: translateY(-2px);
+}
 
 .ac-kicker {
-    color: #6d28d9;
+    color: #6d28d9 !important;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .04em;
@@ -80,7 +150,7 @@ body {
 
 .ac-btn {
     background: #6d28d9;
-    color: #fff;
+    color: #fff !important;
     border: 0;
     border-radius: 999px;
     padding: 8px 16px;
@@ -90,18 +160,62 @@ body {
 
 .ac-btn.secondary {
     background: #f4f4f5;
-    color: #3f3f46;
+    color: #3f3f46 !important;
+}
+
+.ac-tabs a.ac-on { color: #fff !important; }
+
+header img.ac-avatar,
+img.ac-avatar {
+    object-fit: cover;
+    background: #ede9fe;
+}
+
+#site__main .bg-white,
+#site__main .text-black,
+.ac-main .text-black {
+    color: #18181b !important;
+}
+
+#site__main .text-gray-500,
+#site__main .text-gray-600 {
+    color: #52525b !important;
 }
 
 .ac-banner {
     background: #f5f3ff;
-    color: #5b21b6;
+    color: #5b21b6 !important;
     border-radius: 12px;
     padding: 12px 14px;
     margin: 14px 0;
 }
 
-.ac-banner.warn { background: #fef3c7; color: #92400e; }
+.ac-banner.warn { background: #fef3c7; color: #92400e !important; }
+
+.ac-btn.danger {
+    background: #fff;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca;
+}
+
+.ac-edit {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 90px auto auto;
+    gap: 8px;
+    align-items: end;
+}
+
+.ac-resource {
+    display: grid;
+    grid-template-columns: 1.4fr 120px 80px auto auto;
+    gap: 8px;
+    align-items: end;
+    margin-top: 8px;
+}
+
+@media (max-width: 800px) {
+    .ac-edit, .ac-resource { grid-template-columns: 1fr; }
+}
 
 .ac-row {
     display: flex;

@@ -3,7 +3,7 @@
     <div class="ac-wrap">
         <p class="ac-kicker">Your batch</p>
         <h1 class="ac-title">@(string.IsNullOrWhiteSpace(Model.Me.Batch) ? "Set your batch" : $"Batch {Model.Me.Batch}")</h1>
-        <p class="ac-muted">Notices, questions, and updates for this batch. @Model.Me.VerificationStatus</p>
+        <p class="ac-muted">Notices, questions, and updates for this batch.</p>
 
         @if (TempData["BatchError"] != null)
         {
