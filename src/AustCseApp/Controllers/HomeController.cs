@@ -1,10 +1,12 @@
 using AustCseApp.Data;
 using AustCseApp.Data.Helpers;
+using AustCseApp.Data.Helpers.Constants;
 using AustCseApp.Data.Helpers.Enums;
 using AustCseApp.Data.Models;
 using AustCseApp.Data.Services;
 using AustCseApp.ViewModels.Home;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -20,13 +22,15 @@ namespace AustCseApp.Controllers
         private readonly IPostsService _postsService;
         private readonly IHashtagsService _hashtagsService;
         private readonly IFilesService _filesService;
+        private readonly UserManager<User> _userManager;
 
-        public HomeController(ILogger<HomeController> logger,IPostsService postsService, IHashtagsService hashtagsService, IFilesService filesService)
+        public HomeController(ILogger<HomeController> logger,IPostsService postsService, IHashtagsService hashtagsService, IFilesService filesService, UserManager<User> userManager)
         {
             _logger = logger;
             _postsService = postsService;
             _hashtagsService = hashtagsService;
             _filesService = filesService;
+            _userManager = userManager;
         }
 
 
@@ -35,9 +39,20 @@ namespace AustCseApp.Controllers
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null) return RedirectToLogin();
 
-            var allPosts = await _postsService.GetAllPostsAsync(loggedInUserId.Value);
+            var me = await _userManager.FindByIdAsync(loggedInUserId.Value.ToString());
+            if (me == null) return RedirectToLogin();
 
-            return View(allPosts);
+            var posts = string.IsNullOrWhiteSpace(me.Batch)
+                ? new List<Post>()
+                : await _postsService.GetBatchPostsAsync(me.Batch, loggedInUserId.Value);
+
+            var isAdmin = await _userManager.IsInRoleAsync(me, AppRoles.Admin);
+            return View(new BatchPageVM
+            {
+                Me = me,
+                Posts = posts,
+                CanPin = me.IsBatchModerator || isAdmin
+            });
         }
 
         public async Task<IActionResult> Details(int postId)
@@ -57,14 +72,32 @@ namespace AustCseApp.Controllers
             var loggedInUserId = GetUserId();
             if (loggedInUserId == null) return RedirectToLogin();
 
+            var me = await _userManager.FindByIdAsync(loggedInUserId.Value.ToString());
+            if (me == null) return RedirectToLogin();
+            if (me.VerificationStatus != VerificationStatus.Verified)
+            {
+                TempData["BatchError"] = "Your account is waiting for verification, so you cannot post yet.";
+                return RedirectToAction("Index");
+            }
+            if (string.IsNullOrWhiteSpace(me.Batch))
+            {
+                TempData["BatchError"] = "Add your batch before posting.";
+                return RedirectToAction("Index");
+            }
+            if (string.IsNullOrWhiteSpace(post.Content))
+            {
+                TempData["BatchError"] = "Write something before you post.";
+                return RedirectToAction("Index");
+            }
+
             var imageUploadPath = await _filesService.UploadImageAsync(post.Image, ImageFileType.PostImage);
 
-            //Create a new post
             var newPost = new Post
             {
                 Content = post.Content,
-                Batch = string.IsNullOrWhiteSpace(post.Batch) ? null : post.Batch.Trim(),
-                Tag = string.IsNullOrWhiteSpace(post.Tag) ? null : post.Tag.Trim(),
+                Batch = me.Batch.Trim(),
+                Tag = string.IsNullOrWhiteSpace(post.Tag) ? post.PostKind.ToString() : post.Tag.Trim(),
+                PostKind = post.PostKind,
                 ImageUrl = imageUploadPath,             
                 NrOfReports = 0,
                 DateCreated = DateTime.UtcNow,
@@ -120,6 +153,19 @@ namespace AustCseApp.Controllers
             return RedirectToAction("Index");
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> PinPost(int postId)
+        {
+            var loggedInUserId = GetUserId();
+            if (loggedInUserId == null) return RedirectToLogin();
+            var me = await _userManager.FindByIdAsync(loggedInUserId.Value.ToString());
+            if (me == null || string.IsNullOrWhiteSpace(me.Batch)) return RedirectToAction("Index");
+            var isAdmin = await _userManager.IsInRoleAsync(me, AppRoles.Admin);
+            if (!me.IsBatchModerator && !isAdmin) return Forbid();
+            await _postsService.PinNoticeAsync(postId, loggedInUserId.Value, me.Batch);
+            return RedirectToAction("Index");
+        }
 
         [HttpPost]
         public async Task<IActionResult> PostRemove(PostRemoveVM postRemoveVM)

@@ -11,7 +11,7 @@
                     <img src="@Url.Content("~/images/avatar/user.png")" class="w-12 h-12 rounded-full" />
                     <div>
                         <div class="font-medium text-black">@user.FullName</div>
-                        <div class="text-sm text-gray-500">@user.Email</div>
+                        <div class="text-sm text-gray-500">@user.AccountKind · batch @user.Batch · @user.VerificationStatus</div>
                     </div>
                 </a>
             }

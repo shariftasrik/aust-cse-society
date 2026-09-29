@@ -1,0 +1,115 @@
+@{
+    var me = ViewBag.Me as User;
+    var hiring = ViewBag.Hiring as List<HiringPost> ?? new List<HiringPost>();
+    var referrals = ViewBag.Referrals as List<ReferralRequest> ?? new List<ReferralRequest>();
+    var mine = ViewBag.Mine as ReferralRequest;
+    var canAsk = me?.AccountKind == AccountKind.Alumni && me.CanRefer && me.VerificationStatus == VerificationStatus.Verified;
+    var canRequest = me?.VerificationStatus == VerificationStatus.Verified && (me.AccountKind == AccountKind.Alumni || me.CurrentSemester is >= 7);
+}
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Careers</p>
+        <h1 class="ac-title">Referrals and hiring</h1>
+        @if (TempData["CareerError"] != null)
+        {
+            <div class="ac-banner warn">@TempData["CareerError"]</div>
+        }
+        @if (TempData["CareerMessage"] != null)
+        {
+            <div class="ac-banner">@TempData["CareerMessage"]</div>
+        }
+        <div class="ac-course" style="margin-top:16px">
+            <section class="ac-card">
+                <h2 style="font-weight:700">Referral requests</h2>
+                <p class="ac-muted">From 7th semester, one open request. Your CV stays hidden until an alumnus asks for it.</p>
+                @if (mine != null)
+                {
+                    <div class="ac-banner">Your request for @mine.TargetRole is open.</div>
+                    <p>@mine.Note</p>
+                    <p class="ac-muted">Asked by @mine.Contacts.Count alumnus(es).</p>
+                    <a asp-action="Cv" asp-route-id="@mine.Id">Your CV</a>
+                    <form asp-action="Close" method="post" style="margin-top:8px">
+                        <input type="hidden" name="id" value="@mine.Id" />
+                        <button class="ac-btn secondary" type="submit">Close request</button>
+                    </form>
+                }
+                else if (canRequest)
+                {
+                    <form asp-action="CreateReferral" method="post" enctype="multipart/form-data" class="ac-form" style="margin-top:12px">
+                        <label>Role<input name="targetRole" required /></label>
+                        <label>Skills<input name="skills" required /></label>
+                        <label>Note<textarea name="note" rows="3" required></textarea></label>
+                        <label>CV (PDF)<input type="file" name="cv" accept="application/pdf" required /></label>
+                        <button class="ac-btn" style="margin-top:10px" type="submit">Post request</button>
+                    </form>
+                }
+                else
+                {
+                    <p class="ac-muted" style="margin-top:8px">Referral requests open from 7th semester.</p>
+                }
+
+                @if (canAsk)
+                {
+                    <h3 style="font-weight:700;margin-top:18px">Open requests</h3>
+                    foreach (var item in referrals)
+                    {
+                        var asked = item.Contacts.Any(c => c.AlumniUserId == me!.Id);
+                        <div class="ac-row">
+                            <div>
+                                <strong>@item.User.FullName</strong> · batch @item.User.Batch
+                                <div>@item.TargetRole</div>
+                                <div class="ac-muted">@item.Skills</div>
+                                @if (asked)
+                                {
+                                    <a asp-action="Cv" asp-route-id="@item.Id">Open CV</a>
+                                    <div class="ac-muted">@item.User.Email</div>
+                                }
+                            </div>
+                            @if (!asked)
+                            {
+                                <form asp-action="Ask" method="post">
+                                    <input type="hidden" name="id" value="@item.Id" />
+                                    <button class="ac-btn" type="submit">Ask for CV</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                }
+            </section>
+            <section class="ac-card">
+                <h2 style="font-weight:700">Hiring</h2>
+                @foreach (var job in hiring)
+                {
+                    <div class="ac-row">
+                        <div>
+                            <strong>@job.RoleTitle</strong>
+                            <div class="ac-muted">@job.User.Company · @job.JobType · @job.Location</div>
+                            <div>@job.HowToApply</div>
+                            <div class="ac-muted">Closes @job.ClosingDate.ToString("dd MMM yyyy")</div>
+                        </div>
+                    </div>
+                }
+                @if (hiring.Count == 0)
+                {
+                    <p class="ac-muted">No open hiring posts.</p>
+                }
+                @if (me?.AccountKind == AccountKind.Alumni && me.VerificationStatus == VerificationStatus.Verified)
+                {
+                    <form asp-action="CreateHiring" method="post" class="ac-form" style="margin-top:12px">
+                        <label>Role<input name="roleTitle" required /></label>
+                        <label>Type
+                            <select name="jobType">
+                                <option>Intern</option>
+                                <option>Full-time</option>
+                            </select>
+                        </label>
+                        <label>Location<input name="location" value="Dhaka" /></label>
+                        <label>How to apply<textarea name="howToApply" rows="3" required></textarea></label>
+                        <label>Closing date<input type="date" name="closingDate" required /></label>
+                        <button class="ac-btn" style="margin-top:10px" type="submit">Post hiring</button>
+                    </form>
+                }
+            </section>
+        </div>
+    </div>
+</main>

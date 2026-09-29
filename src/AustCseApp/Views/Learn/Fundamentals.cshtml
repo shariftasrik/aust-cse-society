@@ -1,0 +1,17 @@
+@model List<Course>
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Career track</p>
+        <h1 class="ac-title">CSE fundamentals</h1>
+        <p class="ac-muted">Skills that outlive one semester: programming, data structures, databases, operating systems, networks, and a first job.</p>
+        <div class="ac-grid">
+            @foreach (var course in Model)
+            {
+                <a class="ac-card" asp-action="Course" asp-route-id="@course.Id">
+                    <div class="ac-kicker">@course.Code</div>
+                    <h2 style="font-size:18px;font-weight:700;margin:6px 0 0">@course.Title</h2>
+                </a>
+            }
+        </div>
+    </div>
+</main>

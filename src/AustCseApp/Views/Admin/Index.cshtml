@@ -1,0 +1,66 @@
+@{
+    var pendingUsers = ViewBag.PendingUsers as List<User> ?? new List<User>();
+    var pendingResources = ViewBag.PendingResources as List<LearningResource> ?? new List<LearningResource>();
+}
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Review</p>
+        <h1 class="ac-title">Verify members and resources</h1>
+        @if (TempData["AdminError"] != null)
+        {
+            <div class="ac-banner warn">@TempData["AdminError"]</div>
+        }
+        <div class="ac-course" style="margin-top:16px">
+            <section class="ac-card">
+                <h2 style="font-weight:700">Pending accounts</h2>
+                @if (pendingUsers.Count == 0)
+                {
+                    <p class="ac-muted">No one is waiting.</p>
+                }
+                @foreach (var person in pendingUsers)
+                {
+                    <div class="ac-row">
+                        <div>
+                            <strong>@person.FullName</strong>
+                            <div class="ac-muted">@person.AccountKind · batch @person.Batch · @person.Email</div>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            <form asp-action="Verify" method="post"><input type="hidden" name="id" value="@person.Id" /><button class="ac-btn" type="submit">Verify</button></form>
+                            <form asp-action="Reject" method="post"><input type="hidden" name="id" value="@person.Id" /><button class="ac-btn secondary" type="submit">Reject</button></form>
+                            <form asp-action="Moderator" method="post"><input type="hidden" name="id" value="@person.Id" /><button class="ac-btn secondary" type="submit">@(person.IsBatchModerator ? "Moderator" : "Make moderator")</button></form>
+                        </div>
+                    </div>
+                }
+            </section>
+            <section class="ac-card">
+                <h2 style="font-weight:700">Pending resources</h2>
+                @foreach (var item in pendingResources)
+                {
+                    <div class="ac-row">
+                        <div>
+                            <strong>@item.Title</strong>
+                            <div class="ac-muted">@item.Kind · @item.Course.Code · @item.SubmittedBy.FullName</div>
+                        </div>
+                        <div style="display:flex;gap:8px">
+                            <form asp-action="ApproveResource" method="post"><input type="hidden" name="id" value="@item.Id" /><button class="ac-btn" type="submit">Approve</button></form>
+                            <form asp-action="RejectResource" method="post"><input type="hidden" name="id" value="@item.Id" /><button class="ac-btn secondary" type="submit">Reject</button></form>
+                        </div>
+                    </div>
+                }
+                <h3 style="font-weight:700;margin-top:16px">Add a course</h3>
+                <form asp-action="AddCourse" method="post" class="ac-form">
+                    <label>Code<input name="code" required /></label>
+                    <label>Title<input name="title" required /></label>
+                    <label>Track
+                        <select name="track">
+                            <option value="Semester">Semester</option>
+                            <option value="Fundamental">Fundamental</option>
+                        </select>
+                    </label>
+                    <label>Semester (1–8)<input name="semester" type="number" min="1" max="8" /></label>
+                    <button class="ac-btn" style="margin-top:10px" type="submit">Add course</button>
+                </form>
+            </section>
+        </div>
+    </div>
+</main>

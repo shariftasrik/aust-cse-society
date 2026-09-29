@@ -63,11 +63,33 @@ namespace AustCseApp.Controllers
             if (!ModelState.IsValid)
                 return View(registerVM);
 
+            if (registerVM.AccountKind == AccountKind.CurrentStudent)
+            {
+                if (string.IsNullOrWhiteSpace(registerVM.StudentId))
+                    ModelState.AddModelError(nameof(registerVM.StudentId), "Student ID is required");
+                if (registerVM.CurrentSemester is null or < 1 or > 8)
+                    ModelState.AddModelError(nameof(registerVM.CurrentSemester), "Semester must be from 1 to 8");
+            }
+            else if (registerVM.GraduationYear is null or < 1995 or > 2100)
+            {
+                ModelState.AddModelError(nameof(registerVM.GraduationYear), "Enter your graduation year");
+            }
+
+            if (!ModelState.IsValid)
+                return View(registerVM);
+
             var newUser = new User()
             {
                 FullName = $"{registerVM.FirstName} {registerVM.LastName}",
                 Email = registerVM.Email,
-                UserName = registerVM.Email
+                UserName = registerVM.Email,
+                AccountKind = registerVM.AccountKind,
+                Batch = registerVM.Batch.Trim(),
+                StudentId = registerVM.StudentId?.Trim(),
+                CurrentSemester = registerVM.CurrentSemester,
+                GraduationYear = registerVM.GraduationYear,
+                Company = registerVM.Company?.Trim(),
+                VerificationStatus = VerificationStatus.Pending
             };
 
             var existingUser = await _userManager.FindByEmailAsync(registerVM.Email);
@@ -84,6 +106,7 @@ namespace AustCseApp.Controllers
                 await _userManager.AddToRoleAsync(newUser, AppRoles.User);
                 await _userManager.AddClaimAsync(newUser, new Claim(CustomClaim.FullName, newUser.FullName));
                 await _signInManager.SignInAsync(newUser, isPersistent: false);
+                TempData["BatchError"] = "Your account is pending. You can browse the library. Posting opens after an admin verifies you.";
                 return RedirectToAction("Index", "Home");
             }
 
@@ -139,6 +162,12 @@ namespace AustCseApp.Controllers
             loggedInUser.FullName = profileVM.FullName;
             loggedInUser.UserName = profileVM.UserName;
             loggedInUser.Bio = profileVM.Bio;
+            loggedInUser.CurrentSemester = profileVM.CurrentSemester;
+            loggedInUser.Company = profileVM.Company;
+            loggedInUser.JobTitle = profileVM.JobTitle;
+            loggedInUser.CanRefer = profileVM.CanRefer && loggedInUser.AccountKind == AccountKind.Alumni;
+            if (string.IsNullOrWhiteSpace(loggedInUser.Batch) && !string.IsNullOrWhiteSpace(profileVM.Batch))
+                loggedInUser.Batch = profileVM.Batch.Trim();
 
             var result = await _userManager.UpdateAsync(loggedInUser);
             if (!result.Succeeded)

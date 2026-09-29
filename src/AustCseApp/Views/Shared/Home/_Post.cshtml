@@ -30,7 +30,7 @@
         <div class="flex-1">
             <a asp-controller="Users" asp-action="Details" asp-route-userId="@Model.UserId">
                 <h4 class="text-black">@Model.User.FullName</h4>
-                <div class="text-xs text-gray-500/80" title="@Model.DateCreated.ToString("MM/dd/yyyy HH:mm")"> @displayTime </div>
+                <div class="text-xs text-gray-500/80" title="@Model.DateCreated.ToString("MM/dd/yyyy HH:mm")"> @displayTime · <span class="ac-pill">@Model.PostKind</span> @(Model.IsPinned ? "· Pinned" : "")</div>
             </a>
         </div>
 
@@ -38,6 +38,16 @@
             <button type="button" class="button-icon w-8 h-8"> <ion-icon class="text-xl" name="ellipsis-horizontal"></ion-icon> </button>
             <div class="w-[245px] post-options-dropdown" uk-dropdown="pos: bottom-right; animation: uk-animation-scale-up uk-transform-origin-top-right; animate-out: true; mode: click">
 
+                @{
+                    var canPin = ViewData["CanPin"] as bool? == true;
+                }
+                @if (canPin && Model.PostKind == PostKind.Notice)
+                {
+                    <form asp-controller="Home" asp-action="PinPost" method="post">
+                        <input type="hidden" name="postId" value="@Model.Id" />
+                        <button type="submit" class="hover:!bg-violet-50 icon-link">@(Model.IsPinned ? "Unpin notice" : "Pin notice")</button>
+                    </form>
+                }
                 @if (Model.UserId == loggedInUserId)
                 {
                     <button type="button" onclick="openPostDeleteConfirmation('@Model.Id')" class="text-red-400 hover:!bg-red-50 delete-post-btn">

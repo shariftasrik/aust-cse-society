@@ -18,6 +18,12 @@ namespace AustCseApp.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<Hashtag> Hashtags { get; set; }
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<LearningResource> LearningResources { get; set; }
+        public DbSet<ResourceSave> ResourceSaves { get; set; }
+        public DbSet<ReferralRequest> ReferralRequests { get; set; }
+        public DbSet<ReferralContact> ReferralContacts { get; set; }
+        public DbSet<HiringPost> HiringPosts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -69,6 +75,57 @@ namespace AustCseApp.Data
                 .HasOne(f => f.User)
                 .WithMany(u => u.Favorites)
                 .HasForeignKey(f => f.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<LearningResource>()
+                .HasOne(r => r.Course)
+                .WithMany(c => c.Resources)
+                .HasForeignKey(r => r.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LearningResource>()
+                .HasOne(r => r.SubmittedBy)
+                .WithMany()
+                .HasForeignKey(r => r.SubmittedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ResourceSave>()
+                .HasKey(s => new { s.UserId, s.LearningResourceId });
+
+            modelBuilder.Entity<ResourceSave>()
+                .HasOne(s => s.LearningResource)
+                .WithMany(r => r.Saves)
+                .HasForeignKey(s => s.LearningResourceId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ResourceSave>()
+                .HasOne(s => s.User)
+                .WithMany()
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReferralRequest>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ReferralContact>()
+                .HasOne(c => c.ReferralRequest)
+                .WithMany(r => r.Contacts)
+                .HasForeignKey(c => c.ReferralRequestId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<ReferralContact>()
+                .HasOne(c => c.Alumni)
+                .WithMany()
+                .HasForeignKey(c => c.AlumniUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<HiringPost>()
+                .HasOne(h => h.User)
+                .WithMany()
+                .HasForeignKey(h => h.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(modelBuilder);

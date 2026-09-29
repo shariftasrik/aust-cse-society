@@ -33,6 +33,36 @@ namespace AustCseApp.Data.Services
             return allPosts;
         }
 
+        public async Task<List<Post>> GetBatchPostsAsync(string batch, int loggedInUserId)
+        {
+            return await _context.Posts
+                .Where(n => n.Batch == batch && !n.IsDeleted && (!n.IsPrivate || n.UserId == loggedInUserId))
+                .Include(n => n.User)
+                .Include(n => n.Likes)
+                .Include(n => n.Favorites)
+                .Include(n => n.Comments).ThenInclude(n => n.User)
+                .OrderByDescending(n => n.IsPinned)
+                .ThenByDescending(n => n.DateCreated)
+                .ToListAsync();
+        }
+
+        public async Task PinNoticeAsync(int postId, int userId, string batch)
+        {
+            var post = await _context.Posts.FirstOrDefaultAsync(n =>
+                n.Id == postId && n.Batch == batch && !n.IsDeleted && n.PostKind == PostKind.Notice);
+            if (post == null) return;
+
+            var pinned = await _context.Posts
+                .Where(n => n.Batch == batch && n.IsPinned && n.Id != post.Id)
+                .ToListAsync();
+            foreach (var item in pinned)
+                item.IsPinned = false;
+
+            post.IsPinned = !post.IsPinned;
+            post.DateUpdated = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<List<Post>> GetPostsByUserAsync(int profileUserId, int loggedInUserId)
         {
             return await _context.Posts

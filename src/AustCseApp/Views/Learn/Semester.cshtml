@@ -1,0 +1,21 @@
+@model List<Course>
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Semester @ViewBag.Semester</p>
+        <h1 class="ac-title">Courses</h1>
+        <div class="ac-grid">
+            @foreach (var course in Model)
+            {
+                <a class="ac-card" asp-action="Course" asp-route-id="@course.Id">
+                    <div class="ac-kicker">@course.Code</div>
+                    <h2 style="font-size:18px;font-weight:700;margin:6px 0 0">@course.Title</h2>
+                    <p class="ac-muted">@course.SyllabusEra</p>
+                </a>
+            }
+        </div>
+        @if (Model.Count == 0)
+        {
+            <div class="ac-card" style="margin-top:16px">No courses in this semester yet. An admin can add one from Review.</div>
+        }
+    </div>
+</main>

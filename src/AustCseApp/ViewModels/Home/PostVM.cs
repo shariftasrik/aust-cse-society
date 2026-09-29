@@ -1,10 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AustCseApp.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace AustCseApp.ViewModels.Home
 {
     public class PostVM
     {
         public string? Content { get; set; }
+
+        public PostKind PostKind { get; set; } = PostKind.General;
 
         [Required]
         public string? Batch { get; set; }

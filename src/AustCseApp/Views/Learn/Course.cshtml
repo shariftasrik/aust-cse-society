@@ -1,0 +1,95 @@
+@model Course
+@{
+    var me = ViewBag.Me as User;
+    var resources = ViewBag.Resources as List<LearningResource> ?? new List<LearningResource>();
+    var kind = Context.Request.Query["kind"].ToString();
+    if (string.IsNullOrEmpty(kind)) kind = "Video";
+    var visible = resources.Where(r => r.Kind.ToString() == kind && (r.ApprovalStatus == ApprovalStatus.Approved || r.SubmittedByUserId == me?.Id)).ToList();
+    var playing = visible.FirstOrDefault(r => r.Kind == ResourceKind.Video && !string.IsNullOrEmpty(r.YoutubeUrl));
+}
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">@Model.Code · @Model.SyllabusEra</p>
+        <h1 class="ac-title">@Model.Title</h1>
+        @if (TempData["LearnError"] != null)
+        {
+            <div class="ac-banner warn">@TempData["LearnError"]</div>
+        }
+        @if (TempData["LearnMessage"] != null)
+        {
+            <div class="ac-banner">@TempData["LearnMessage"]</div>
+        }
+        <div class="ac-tabs" style="margin-top:14px">
+            @foreach (var tab in new[] { "Video", "Quiz", "Final", "Note", "Book" })
+            {
+                <a class="@(kind == tab ? "ac-on" : "")" asp-action="Course" asp-route-id="@Model.Id" asp-route-kind="@tab">@tab</a>
+            }
+        </div>
+        <div class="ac-course">
+            <div>
+                @if (playing != null)
+                {
+                    <div class="ac-player"><iframe src="@playing.YoutubeUrl" allowfullscreen></iframe></div>
+                }
+                else
+                {
+                    <div class="ac-card">Pick a video in the list, or switch to Quiz, Final, Note, or Book.</div>
+                }
+            </div>
+            <div class="ac-card">
+                @if (visible.Count == 0)
+                {
+                    <p class="ac-muted">Nothing approved on this shelf yet.</p>
+                }
+                @foreach (var item in visible)
+                {
+                    <div class="ac-row">
+                        <div>
+                            <strong>@item.Title</strong>
+                            <div class="ac-muted">@item.SessionLabel @item.Year @(item.ApprovalStatus == ApprovalStatus.Pending ? "· waiting for review" : "")</div>
+                            @if (!string.IsNullOrEmpty(item.FilePath))
+                            {
+                                <a asp-action="File" asp-route-id="@item.Id">Open PDF</a>
+                            }
+                        </div>
+                        @if (item.ApprovalStatus == ApprovalStatus.Approved)
+                        {
+                            <form asp-action="Save" method="post">
+                                <input type="hidden" name="resourceId" value="@item.Id" />
+                                <input type="hidden" name="courseId" value="@Model.Id" />
+                                <button class="ac-btn secondary" type="submit">@(item.Saves.Any(s => s.UserId == me?.Id) ? "Saved" : "Save")</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (me?.VerificationStatus == VerificationStatus.Verified)
+        {
+            <form asp-action="Submit" method="post" enctype="multipart/form-data" class="ac-card ac-form" style="margin-top:16px">
+                <h2 style="font-weight:700;margin-bottom:8px">Add to this course</h2>
+                <input type="hidden" name="courseId" value="@Model.Id" />
+                <label>Kind
+                    <select name="kind">
+                        <option>Video</option>
+                        <option>Quiz</option>
+                        <option>Final</option>
+                        <option>Note</option>
+                        <option>Book</option>
+                    </select>
+                </label>
+                <label>Title<input name="title" required /></label>
+                <label>YouTube link<input name="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." /></label>
+                <label>Session<input name="sessionLabel" placeholder="Spring 2024" /></label>
+                <label>Year<input name="year" type="number" /></label>
+                <label>PDF<input type="file" name="file" accept="application/pdf" /></label>
+                <label style="display:flex;gap:8px;align-items:center;margin-top:8px">
+                    <input type="checkbox" name="isOriginalOrOpenLicense" value="true" style="width:auto" />
+                    This note or book is my own writing or openly licensed.
+                </label>
+                <button class="ac-btn" style="margin-top:12px" type="submit">Submit for review</button>
+            </form>
+        }
+    </div>
+</main>
