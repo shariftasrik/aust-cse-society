@@ -16,6 +16,17 @@ namespace AustCseApp.Data.Models
 
         public bool IsDeleted { get; set; }
 
+        public AccountKind AccountKind { get; set; } = AccountKind.CurrentStudent;
+        public VerificationStatus VerificationStatus { get; set; } = VerificationStatus.Pending;
+        public string? Batch { get; set; }
+        public string? StudentId { get; set; }
+        public int? CurrentSemester { get; set; }
+        public int? GraduationYear { get; set; }
+        public string? Company { get; set; }
+        public string? JobTitle { get; set; }
+        public bool CanRefer { get; set; }
+        public bool IsBatchModerator { get; set; }
+
 
         // Navigation property, one to many maintain korar jonno
         public ICollection<Post> Posts { get; set; } = new List<Post>();

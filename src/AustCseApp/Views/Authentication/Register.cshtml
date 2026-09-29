@@ -28,6 +28,45 @@
                         </div>
                     </div>
                     <div class="col-span-2">
+                        <label asp-for="AccountKind">I am</label>
+                        <div class="mt-2.5">
+                            <select asp-for="AccountKind" class="!w-full">
+                                <option value="CurrentStudent">Current student</option>
+                                <option value="Alumni">Alumnus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="Batch">Batch</label>
+                        <div class="mt-2.5">
+                            <input asp-for="Batch" placeholder="49" class="!w-full" />
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="StudentId">Student ID</label>
+                        <div class="mt-2.5">
+                            <input asp-for="StudentId" placeholder="Required for students" class="!w-full" />
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="CurrentSemester">Semester</label>
+                        <div class="mt-2.5">
+                            <input asp-for="CurrentSemester" type="number" min="1" max="8" placeholder="1-8" class="!w-full" />
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="GraduationYear">Graduation year</label>
+                        <div class="mt-2.5">
+                            <input asp-for="GraduationYear" type="number" placeholder="Alumni" class="!w-full" />
+                        </div>
+                    </div>
+                    <div class="col-span-2">
+                        <label asp-for="Company">Company</label>
+                        <div class="mt-2.5">
+                            <input asp-for="Company" placeholder="Alumni company, if you have one" class="!w-full" />
+                        </div>
+                    </div>
+                    <div class="col-span-2">
                         <label asp-for="Email">Email address</label>
                         <div class="mt-2.5">
                             <input asp-for="Email" id="email" name="email" type="email" placeholder="Email" required="" class="!w-full" />

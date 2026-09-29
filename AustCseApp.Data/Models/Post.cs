@@ -26,6 +26,8 @@ namespace AustCseApp.Data.Models
         [StringLength(2048)]
         public string ImageUrl { get; set; }
         public bool IsPrivate { get; set; }
+        public PostKind PostKind { get; set; } = PostKind.General;
+        public bool IsPinned { get; set; }
 
         [NotMapped]
         //public IFormFile? UploadedContent { get; set; }

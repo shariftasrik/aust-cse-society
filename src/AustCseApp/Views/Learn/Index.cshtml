@@ -1,0 +1,20 @@
+<main class="ac-main">
+    <div class="ac-wrap">
+        <p class="ac-kicker">Learning library</p>
+        <h1 class="ac-title">Semester courses</h1>
+        <p class="ac-muted">Starter catalog. Reviewers can add the official course code. Videos, papers, notes, and legal books live on each course.</p>
+        <div class="ac-grid">
+            @for (var semester = 1; semester <= 8; semester++)
+            {
+                <a class="ac-card" asp-action="Semester" asp-route-id="@semester">
+                    <div class="ac-kicker">Semester</div>
+                    <h2 style="font-size:22px;font-weight:700;margin:6px 0 0">@semester</h2>
+                </a>
+            }
+            <a class="ac-card" asp-action="Fundamentals">
+                <div class="ac-kicker">Career</div>
+                <h2 style="font-size:22px;font-weight:700;margin:6px 0 0">Fundamentals</h2>
+            </a>
+        </div>
+    </div>
+</main>

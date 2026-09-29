@@ -1,41 +1,24 @@
-﻿<div id="site__sidebar" class="fixed top-0 left-0 z-[99] pt-[--m-top] overflow-hidden transition-transform xl:duration-500 max-xl:w-full max-xl:-translate-x-full">
-    <div class="p-2 max-xl:bg-white shadow-sm 2xl:w-72 sm:w-64 w-[80%] h-[calc(100vh-64px)] relative z-30 max-lg:border-r dark:max-xl:!bg-slate-700 dark:border-slate-700">
-        <div class="pr-4" data-simplebar>
-            <nav id="side-main">
-                <ul>
-                    <li>
-                        <a asp-controller="Home" asp-action="Index">
-                            <img src="~/images/icons/home.png" class="w-6" />
-                            <span> Feed </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Users" asp-action="Index">
-                            <img src="~/images/icons/group-2.png" class="w-6" />
-                            <span> Members </span>
-                        </a>
-                    </li>
-                    <li>
-                        <a asp-controller="Campus" asp-action="More">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                            </svg>
-                            <span>More</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            <nav id="side-pages" class="font-medium text-sm text-black border-t pt-3 mt-2">
-                <div class="px-3 pb-2 text-sm font-medium">
-                    <div class="text-black">Pages</div>
-                </div>
-                <ul class="mt-2 -space-y-2">
-                    <li>
-                        <a asp-controller="Settings" asp-action="Index">
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
+﻿@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    string Active(string name, string? act = null) =>
+        controller == name && (act == null || action == act) ? "ac-active" : "";
+}
+<div id="site__sidebar" class="ac-sidebar fixed top-0 left-0 z-[99] pt-[--m-top] overflow-hidden transition-transform xl:duration-500 max-xl:w-full max-xl:-translate-x-full">
+    <div class="p-2 max-xl:bg-white shadow-sm 2xl:w-72 sm:w-64 w-[80%] h-[calc(100vh-64px)] relative z-30 max-lg:border-r">
+        <div class="pr-2" data-simplebar>
+            <nav>
+                <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Batch</a>
+                <a class="@(controller == "Learn" && action != "Saved" && action != "Fundamentals" ? "ac-active" : "")" asp-controller="Learn" asp-action="Index">Learn</a>
+                <a class="@Active("Learn", "Fundamentals")" asp-controller="Learn" asp-action="Fundamentals">Fundamentals</a>
+                <a class="@Active("Career")" asp-controller="Career" asp-action="Index">Careers</a>
+                <a class="@Active("Users")" asp-controller="Users" asp-action="Index">Members</a>
+                <a class="@Active("Learn", "Saved")" asp-controller="Learn" asp-action="Saved">Saved</a>
+                @if (User.IsInRole(AppRoles.Admin))
+                {
+                    <a class="@Active("Admin")" asp-controller="Admin" asp-action="Index">Review</a>
+                }
+                <a class="@Active("Settings")" asp-controller="Settings" asp-action="Index">Settings</a>
             </nav>
         </div>
     </div>

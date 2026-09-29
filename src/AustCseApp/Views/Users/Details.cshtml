@@ -19,6 +19,7 @@
                 <div>
                     <h3 class="md:text-3xl text-base font-bold text-black">@Model.ProfileUser.FullName</h3>
                     <p class="mt-2 text-gray-500">@Model.ProfileUser.Email</p>
+                    <p class="mt-1 text-gray-600">@Model.ProfileUser.AccountKind · batch @Model.ProfileUser.Batch · @Model.ProfileUser.VerificationStatus @(string.IsNullOrEmpty(Model.ProfileUser.Company) ? "" : "· " + Model.ProfileUser.Company)</p>
                     @if (!string.IsNullOrEmpty(Model.ProfileUser.Bio))
                     {
                         <p class="mt-2 text-gray-600">@Model.ProfileUser.Bio</p>

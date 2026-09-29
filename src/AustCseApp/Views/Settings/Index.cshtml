@@ -70,6 +70,37 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap-10">
+                                <label class="w-32 text-right">Batch</label>
+                                <div class="flex-1">
+                                    <input value="@Model.Batch" type="text" name="batch" placeholder="Only if yours is empty" class="w-full" />
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-10">
+                                <label class="w-32 text-right">Semester</label>
+                                <div class="flex-1">
+                                    <input value="@Model.CurrentSemester" type="number" name="currentSemester" class="w-full" />
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-10">
+                                <label class="w-32 text-right">Company</label>
+                                <div class="flex-1">
+                                    <input value="@Model.Company" type="text" name="company" class="w-full" />
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-10">
+                                <label class="w-32 text-right">Job title</label>
+                                <div class="flex-1">
+                                    <input value="@Model.JobTitle" type="text" name="jobTitle" class="w-full" />
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-10">
+                                <label class="w-32 text-right">I can refer</label>
+                                <div class="flex-1">
+                                    <input type="checkbox" name="canRefer" value="true" @(Model.CanRefer ? "checked" : "") />
+                                    <span class="ac-muted">Alumni only. Shows referral requests to you.</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-10">
                                 <label class="w-32 text-right">Bio</label>
                                 <div class="flex-1">
                                     <textarea class="w-full" name="bio" rows="5" placeholder="Enter your bio">@Model.Bio</textarea>

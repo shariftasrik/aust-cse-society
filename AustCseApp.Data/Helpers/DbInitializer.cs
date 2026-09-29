@@ -35,7 +35,11 @@ namespace AustCseApp.Data.Helpers
                     Email = "nimur@gmail.com",
                     FullName = "Nimur Rahman Sharif",
                     ProfilePictureUrl = "https://pixabay.com/illustrations/man-male-cartoon-ai-generated-9637000/",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    VerificationStatus = VerificationStatus.Verified,
+                    AccountKind = AccountKind.CurrentStudent,
+                    Batch = "49",
+                    CurrentSemester = 5
                 };
 
                 var result = await userManager.CreateAsync(newUser, userPassword);
@@ -49,7 +53,13 @@ namespace AustCseApp.Data.Helpers
                     Email = "admin@tasrik.com",
                     FullName = "Tasrik Admin",
                     ProfilePictureUrl = "https://pixabay.com/illustrations/man-male-cartoon-ai-generated-9637000/",
-                    EmailConfirmed = true
+                    EmailConfirmed = true,
+                    VerificationStatus = VerificationStatus.Verified,
+                    AccountKind = AccountKind.Alumni,
+                    Batch = "40",
+                    Company = "AUST CSE",
+                    CanRefer = true,
+                    IsBatchModerator = true
                 };
 
                 var resultNewAdmin = await userManager.CreateAsync(newAdmin, userPassword);
@@ -103,6 +113,49 @@ namespace AustCseApp.Data.Helpers
                 await appDbContext.Posts.AddRangeAsync(newPostWithoutImage, newPostWithImage);
                 await appDbContext.SaveChangesAsync();
             }
+
+            if (!appDbContext.Courses.Any())
+            {
+                var courses = new List<Course>
+                {
+                    CourseOf("S1-PROG", "Structured programming", 1),
+                    CourseOf("S1-DISC", "Discrete mathematics", 1),
+                    CourseOf("S2-OOP", "Object oriented programming", 2),
+                    CourseOf("S2-DLD", "Digital logic design", 2),
+                    CourseOf("S3-DSA", "Data structures", 3),
+                    CourseOf("S3-DB", "Database systems", 3),
+                    CourseOf("S4-ALG", "Algorithms", 4),
+                    CourseOf("S4-CA", "Computer architecture", 4),
+                    CourseOf("S5-OS", "Operating systems", 5),
+                    CourseOf("S5-SE", "Software engineering", 5),
+                    CourseOf("S6-CN", "Computer networks", 6),
+                    CourseOf("S6-AI", "Artificial intelligence", 6),
+                    CourseOf("S7-WEB", "Web engineering", 7),
+                    CourseOf("S7-SEC", "Computer security", 7),
+                    CourseOf("S8-TH", "Thesis", 8),
+                    CourseOf("S8-PROJ", "Project", 8),
+                    new Course { Code = "F-PROG", Title = "Programming foundations", Track = CourseTrack.Fundamental, SyllabusEra = "Career" },
+                    new Course { Code = "F-DSA", Title = "Data structures for interviews", Track = CourseTrack.Fundamental, SyllabusEra = "Career" },
+                    new Course { Code = "F-DB", Title = "Databases", Track = CourseTrack.Fundamental, SyllabusEra = "Career" },
+                    new Course { Code = "F-OS", Title = "Operating systems", Track = CourseTrack.Fundamental, SyllabusEra = "Career" },
+                    new Course { Code = "F-NET", Title = "Networks", Track = CourseTrack.Fundamental, SyllabusEra = "Career" },
+                    new Course { Code = "F-JOB", Title = "First job", Track = CourseTrack.Fundamental, SyllabusEra = "Career" }
+                };
+                await appDbContext.Courses.AddRangeAsync(courses);
+                await appDbContext.SaveChangesAsync();
+            }
+        }
+
+        private static Course CourseOf(string code, string title, int semester)
+        {
+            return new Course
+            {
+                Code = code,
+                Title = title,
+                Track = CourseTrack.Semester,
+                SemesterNumber = semester,
+                SyllabusEra = "Starter catalog"
+            };
         }
     }
 }

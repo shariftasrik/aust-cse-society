@@ -1,9 +1,20 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AustCseApp.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace AustCseApp.ViewModels.Authentication
 {
     public class RegisterVM
     {
+        public AccountKind AccountKind { get; set; } = AccountKind.CurrentStudent;
+
+        [Required(ErrorMessage = "Batch is required")]
+        [RegularExpression(@"^\d{2,3}$", ErrorMessage = "Batch should look like 49")]
+        public string Batch { get; set; }
+
+        public string? StudentId { get; set; }
+        public int? CurrentSemester { get; set; }
+        public int? GraduationYear { get; set; }
+        public string? Company { get; set; }
         [Required(ErrorMessage = "First Name is required")]
         [StringLength(50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters")]
         [RegularExpression(@"^[a-zA-Z]+$", ErrorMessage = "First Name must contain only letters")]

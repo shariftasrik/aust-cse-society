@@ -2,6 +2,7 @@ using AustCseApp.Data;
 using AustCseApp.Data.Helpers;
 using AustCseApp.Data.Models;
 using AustCseApp.Data.Services;
+using AustCseApp.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,9 @@ builder.Services.AddScoped<IPostsService, PostsService>();
 builder.Services.AddScoped<IHashtagsService, HashtagsService>();
 builder.Services.AddScoped<IFilesService, FilesService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
+builder.Services.AddScoped<ILearnService, LearnService>();
+builder.Services.AddScoped<ICareerService, CareerService>();
+builder.Services.AddScoped<PrivateFileStore>();
 
 
 //Identity configuration

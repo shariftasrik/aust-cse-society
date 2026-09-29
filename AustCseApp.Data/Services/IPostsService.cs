@@ -11,6 +11,8 @@ namespace AustCseApp.Data.Services
     public interface IPostsService
     {
         Task<List<Post>> GetAllPostsAsync(int loggedInUserId);
+        Task<List<Post>> GetBatchPostsAsync(string batch, int loggedInUserId);
+        Task PinNoticeAsync(int postId, int userId, string batch);
         Task<List<Post>> GetPostsByUserAsync(int profileUserId, int loggedInUserId);
         Task<Post> GetPostByIdAsync(int postId, int loggedInUserId);
         Task<List<Post>> GetAllFavoritedPostsAsync(int loggedInUserId);
