@@ -16,6 +16,11 @@ namespace AustCseApp.Data.Services
         Task<List<LearningResource>> GetSavedAsync(int userId);
         Task<LearningResource?> GetResourceAsync(int resourceId);
         Task<Course> AddCourseAsync(Course course);
+        Task<List<Course>> GetAllCoursesAsync();
+        Task<bool> UpdateCourseAsync(int id, string code, string title, int? semester, CourseTrack track);
+        Task<bool> DeleteCourseAsync(int id);
+        Task<bool> UpdateResourceAsync(int id, string title, string? sessionLabel, int? year);
+        Task<bool> DeleteResourceAsync(int id);
     }
 
     public class LearnService : ILearnService
@@ -129,6 +134,58 @@ namespace AustCseApp.Data.Services
             await _context.Courses.AddAsync(course);
             await _context.SaveChangesAsync();
             return course;
+        }
+
+        public Task<List<Course>> GetAllCoursesAsync()
+        {
+            return _context.Courses
+                .Include(c => c.Resources)
+                .OrderBy(c => c.Track)
+                .ThenBy(c => c.SemesterNumber)
+                .ThenBy(c => c.Code)
+                .ToListAsync();
+        }
+
+        public async Task<bool> UpdateCourseAsync(int id, string code, string title, int? semester, CourseTrack track)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course == null || string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(title)) return false;
+            course.Code = code.Trim();
+            course.Title = title.Trim();
+            course.Track = track;
+            course.SemesterNumber = track == CourseTrack.Fundamental ? null : semester;
+            if (track == CourseTrack.Fundamental) course.SyllabusEra = "Career";
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteCourseAsync(int id)
+        {
+            var course = await _context.Courses.FirstOrDefaultAsync(c => c.Id == id);
+            if (course == null) return false;
+            _context.Courses.Remove(course);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> UpdateResourceAsync(int id, string title, string? sessionLabel, int? year)
+        {
+            var resource = await _context.LearningResources.FirstOrDefaultAsync(r => r.Id == id);
+            if (resource == null || string.IsNullOrWhiteSpace(title)) return false;
+            resource.Title = title.Trim();
+            resource.SessionLabel = string.IsNullOrWhiteSpace(sessionLabel) ? null : sessionLabel.Trim();
+            resource.Year = year;
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> DeleteResourceAsync(int id)
+        {
+            var resource = await _context.LearningResources.FirstOrDefaultAsync(r => r.Id == id);
+            if (resource == null) return false;
+            _context.LearningResources.Remove(resource);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }

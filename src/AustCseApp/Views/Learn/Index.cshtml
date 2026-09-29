@@ -8,12 +8,14 @@
             {
                 <a class="ac-card" asp-action="Semester" asp-route-id="@semester">
                     <div class="ac-kicker">Semester</div>
-                    <h2 style="font-size:22px;font-weight:700;margin:6px 0 0">@semester</h2>
+                    <h2 class="ac-sem-num">@semester</h2>
+                    <p class="ac-muted">Courses, videos, and papers</p>
                 </a>
             }
             <a class="ac-card" asp-action="Fundamentals">
                 <div class="ac-kicker">Career</div>
-                <h2 style="font-size:22px;font-weight:700;margin:6px 0 0">Fundamentals</h2>
+                <h2 class="ac-sem-num" style="font-size:22px">Fundamentals</h2>
+                <p class="ac-muted">Skills beside the syllabus</p>
             </a>
         </div>
     </div>

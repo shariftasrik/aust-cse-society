@@ -4,8 +4,12 @@
 }
 <main class="ac-main">
     <div class="ac-wrap">
-        <p class="ac-kicker">Review</p>
+        <p class="ac-kicker">Admin</p>
         <h1 class="ac-title">Verify members and resources</h1>
+        <div class="ac-tabs" style="margin-top:14px">
+            <a class="ac-on" asp-action="Index">People</a>
+            <a asp-action="Content">Semester content</a>
+        </div>
         @if (TempData["AdminError"] != null)
         {
             <div class="ac-banner warn">@TempData["AdminError"]</div>
@@ -47,19 +51,7 @@
                         </div>
                     </div>
                 }
-                <h3 style="font-weight:700;margin-top:16px">Add a course</h3>
-                <form asp-action="AddCourse" method="post" class="ac-form">
-                    <label>Code<input name="code" required /></label>
-                    <label>Title<input name="title" required /></label>
-                    <label>Track
-                        <select name="track">
-                            <option value="Semester">Semester</option>
-                            <option value="Fundamental">Fundamental</option>
-                        </select>
-                    </label>
-                    <label>Semester (1–8)<input name="semester" type="number" min="1" max="8" /></label>
-                    <button class="ac-btn" style="margin-top:10px" type="submit">Add course</button>
-                </form>
+                <p class="ac-muted" style="margin-top:12px">Course codes, titles, and uploaded files are edited on <a asp-action="Content">Semester content</a>.</p>
             </section>
         </div>
     </div>

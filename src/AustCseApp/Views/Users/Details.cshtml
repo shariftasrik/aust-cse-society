@@ -8,11 +8,7 @@
                 <div class="flex-shrink-0 mr-4">
                     <div class="relative lg:h-28 lg:w-28 w-28 h-28">
                         <div class="relative overflow-hidden rounded-full md:border-[6px] border-gray-100 shrink-0">
-                            <img src="@(!string.IsNullOrEmpty(Model.ProfileUser.ProfilePictureUrl) && !Model.ProfileUser.ProfilePictureUrl.StartsWith("http")
-                                                            ? Url.Content("~/" + Model.ProfileUser.ProfilePictureUrl)
-                                                            : (string.IsNullOrEmpty(Model.ProfileUser.ProfilePictureUrl) || Model.ProfileUser.ProfilePictureUrl.StartsWith("http")
-                                                                ? Url.Content("~/images/avatar/user.png")
-                                                                : Model.ProfileUser.ProfilePictureUrl))" />
+                            <img src="@Url.Content(ProfilePhoto.Src(Model.ProfileUser.ProfilePictureUrl))" class="ac-avatar object-cover w-full h-full" alt="" />
                         </div>
                     </div>
                 </div>

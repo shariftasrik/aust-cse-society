@@ -8,7 +8,7 @@
             {
                 <a asp-controller="Users" asp-action="Details" asp-route-userId="@user.Id"
                    class="bg-white rounded-xl shadow-sm p-4 flex items-center gap-3">
-                    <img src="@Url.Content("~/images/avatar/user.png")" class="w-12 h-12 rounded-full" />
+                    <img src="@Url.Content(ProfilePhoto.Src(user.ProfilePictureUrl))" class="ac-avatar w-12 h-12 rounded-full object-cover" alt="" />
                     <div>
                         <div class="font-medium text-black">@user.FullName</div>
                         <div class="text-sm text-gray-500">@user.AccountKind · batch @user.Batch · @user.VerificationStatus</div>

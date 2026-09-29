@@ -11,7 +11,7 @@
                 <form id="updateProfilePictureForm" class="flex items-center gap-4 w-full" asp-controller="Settings" asp-action="UpdateProfilePicture" enctype="multipart/form-data">
                     <div class="relative w-12 h-12 shrink-0">
                         <label for="imageUpload" class="cursor-pointer">
-                            <img id="imagePreview" src="@(!string.IsNullOrEmpty(Model.ProfilePictureUrl) ? Model.ProfilePictureUrl : Url.Content("~/images/avatar/user.png"))" class="object-cover w-full h-full rounded-full" alt="Profile Picture Placeholder" />
+                            <img id="imagePreview" src="@Url.Content(ProfilePhoto.Src(Model.ProfilePictureUrl))" class="ac-avatar object-cover w-full h-full rounded-full" alt="" />
                             <input type="file" id="imageUpload" name="ProfilePictureImage" class="hidden" accept="image/png, image/jpeg" />
                         </label>
 

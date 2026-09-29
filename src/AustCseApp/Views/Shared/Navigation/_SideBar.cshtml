@@ -6,8 +6,8 @@
 }
 <div id="site__sidebar" class="ac-sidebar fixed top-0 left-0 z-[99] pt-[--m-top] overflow-hidden transition-transform xl:duration-500 max-xl:w-full max-xl:-translate-x-full">
     <div class="p-2 max-xl:bg-white shadow-sm 2xl:w-72 sm:w-64 w-[80%] h-[calc(100vh-64px)] relative z-30 max-lg:border-r">
-        <div class="pr-2" data-simplebar>
-            <nav>
+        <div class="ac-side-shell">
+            <nav class="ac-side-main">
                 <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Batch</a>
                 <a class="@(controller == "Learn" && action != "Saved" && action != "Fundamentals" ? "ac-active" : "")" asp-controller="Learn" asp-action="Index">Learn</a>
                 <a class="@Active("Learn", "Fundamentals")" asp-controller="Learn" asp-action="Fundamentals">Fundamentals</a>
@@ -16,8 +16,10 @@
                 <a class="@Active("Learn", "Saved")" asp-controller="Learn" asp-action="Saved">Saved</a>
                 @if (User.IsInRole(AppRoles.Admin))
                 {
-                    <a class="@Active("Admin")" asp-controller="Admin" asp-action="Index">Review</a>
+                    <a class="@Active("Admin")" asp-controller="Admin" asp-action="Index">Admin</a>
                 }
+            </nav>
+            <nav class="ac-side-bottom">
                 <a class="@Active("Settings")" asp-controller="Settings" asp-action="Index">Settings</a>
             </nav>
         </div>
