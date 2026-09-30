@@ -72,8 +72,8 @@ header a {
 
 .ac-sidebar nav a.ac-active,
 .ac-sidebar nav a:hover {
-    background: #f5f3ff;
-    color: #6d28d9 !important;
+    background: #e8f6ee;
+    color: #068036 !important;
 }
 
 .ac-main {
@@ -135,13 +135,14 @@ header a {
     transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
 }
 .ac-grid a.ac-card:hover {
-    border-color: #c4b5fd;
-    box-shadow: 0 10px 24px rgba(109, 40, 217, .08);
+    border-color: #8fcea8;
+    box-shadow: 0 10px 24px rgba(6, 128, 54, .12);
     transform: translateY(-2px);
 }
 
+.ac-main .ac-kicker,
 .ac-kicker {
-    color: #6d28d9 !important;
+    color: #068036 !important;
     font-size: 12px;
     font-weight: 700;
     letter-spacing: .04em;
@@ -149,7 +150,7 @@ header a {
 }
 
 .ac-btn {
-    background: #6d28d9;
+    background: #068036;
     color: #fff !important;
     border: 0;
     border-radius: 999px;
@@ -168,7 +169,22 @@ header a {
 header img.ac-avatar,
 img.ac-avatar {
     object-fit: cover;
-    background: #ede9fe;
+    background: #d9f2e4;
+}
+
+.ac-brand-logo {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.ac-brand-name {
+    margin-left: 8px;
+    font-weight: 700;
+    font-size: 16px;
+    color: #18181b !important;
+    white-space: nowrap;
 }
 
 #site__main .bg-white,
@@ -183,8 +199,8 @@ img.ac-avatar {
 }
 
 .ac-banner {
-    background: #f5f3ff;
-    color: #5b21b6 !important;
+    background: #e8f6ee;
+    color: #046028 !important;
     border-radius: 12px;
     padding: 12px 14px;
     margin: 14px 0;
@@ -258,7 +274,7 @@ img.ac-avatar {
     font-size: 13px;
     font-weight: 600;
 }
-.ac-tabs a.ac-on { background: #6d28d9; color: #fff; }
+.ac-tabs a.ac-on { background: #068036; color: #fff; }
 
 .ac-form input, .ac-form select, .ac-form textarea {
     width: 100%;
@@ -270,8 +286,8 @@ img.ac-avatar {
 
 .ac-pill {
     display: inline-block;
-    background: #ede9fe;
-    color: #5b21b6;
+    background: #d9f2e4;
+    color: #046028;
     border-radius: 999px;
     padding: 2px 8px;
     font-size: 12px;
