@@ -28,11 +28,11 @@ namespace AustCseApp.Data.Helpers
             //Users with Roles
             if (!userManager.Users.Any(n => !string.IsNullOrEmpty(n.Email)))
             {
-                var userPassword = "Coding@1234?";
+                var userPassword = "Tasrik@1234";
                 var newUser = new User()
                 {
-                    UserName = "nimurrahman",
-                    Email = "nimur@gmail.com",
+                    UserName = "tasrik",
+                    Email = "shariftasrik12@gmail.com",
                     FullName = "Nimur Rahman Sharif",
                     ProfilePictureUrl = "https://pixabay.com/illustrations/man-male-cartoon-ai-generated-9637000/",
                     EmailConfirmed = true,
